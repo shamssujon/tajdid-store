@@ -1,6 +1,13 @@
+import { useQuery } from "react-query";
 import ProductCard from "../components/ProductCard";
 
 const Products = () => {
+	const { status, error, data } = useQuery("productsData", () =>
+		fetch("https://fakestoreapi.com/products/").then((res) => res.json()),
+	);
+
+	// console.log(data);
+
 	return (
 		<div>
 			<div className="flex items-center justify-between gap-6 p-10">
@@ -12,14 +19,27 @@ const Products = () => {
 				</button>
 			</div>
 
-			<div className="grid grid-cols-3 gap-5 px-10">
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
-				<ProductCard />
+			<div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 px-10">
+				{status === "loading" ? (
+					"loading"
+				) : status === "error" ? (
+					<span>{error.message}</span>
+				) : (
+					<>
+						{data.map((product) => (
+							<ProductCard key={product.id} product={product} />
+						))}
+					</>
+				)}
 			</div>
+			{/* <div className="grid grid-cols-3 gap-5 px-10">
+				<ProductCard />
+				<ProductCard />
+				<ProductCard />
+				<ProductCard />
+				<ProductCard />
+				<ProductCard />
+			</div> */}
 		</div>
 	);
 };

@@ -1,14 +1,17 @@
-const ProductCard = () => {
+const ProductCard = (product) => {
+	console.log(product.product);
+
+	const { id, title, price, description, category, image, rating } = product.product;
 	return (
 		<div className="rounded-md border bg-white">
 			<div className="aspect-video overflow-hidden p-6">
-				<img src="/product.png" alt="" className="h-full w-full object-contain" />
+				<img src={image} alt="" className="h-full w-full object-contain" />
 			</div>
 			<hr />
 			<div className="p-6">
 				<div className="flex items-start justify-between gap-4">
 					<div className="">
-						<h4 className="text-lg font-semibold text-gray-950">$7.95</h4>
+						<h4 className="text-lg font-semibold text-gray-950">${price}</h4>
 
 						<div className="flex items-center gap-2">
 							<div className="flex items-center">
@@ -73,7 +76,7 @@ const ProductCard = () => {
 									/>
 								</svg>
 							</div>
-							<p className="text-base text-orange-400">5.9</p>
+							<p className="text-base text-orange-400">{rating.rate}</p>
 						</div>
 					</div>
 					<button className="inline-grid place-content-center rounded-md border p-2 text-rose-600">
@@ -85,7 +88,7 @@ const ProductCard = () => {
 						</svg>
 					</button>
 				</div>
-				<p className="mt-2 text-gray-600">Opna Women's Short Sleeve Moisture</p>
+				<p className="mt-2 text-gray-600">{title}</p>
 			</div>
 		</div>
 	);

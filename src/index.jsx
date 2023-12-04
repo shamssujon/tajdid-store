@@ -4,6 +4,9 @@ import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Products from "./pages/Products.jsx";
 import DashboardLayout from "./layouts/DashboardLayout";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
 	{
@@ -24,6 +27,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("app")).render(
 	<React.StrictMode>
-		<RouterProvider router={router}></RouterProvider>
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router}></RouterProvider>
+		</QueryClientProvider>
 	</React.StrictMode>
 );
