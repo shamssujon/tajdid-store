@@ -5,6 +5,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Products from "./pages/Products.jsx";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { QueryClient, QueryClientProvider } from "react-query";
+import CreateProduct from "./pages/CreateProduct";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
 			{
 				path: "/products",
 				element: <Products />,
+			},
+			{
+				path: "/products/create-product",
+				element: <CreateProduct />,
 			},
 		],
 	},
