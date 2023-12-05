@@ -1,7 +1,50 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddProduct = () => {
+	const navigate = useNavigate();
+
+	const {
+		register,
+		handleSubmit,
+		watch,
+		reset,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			title: "",
+			price: null,
+			description: "",
+			image: "",
+			category: "",
+		},
+	});
+
+	const onSubmit = (data) => {
+		// console.log(data);
+
+		fetch("https://fakestoreapi.com/products", {
+			method: "POST",
+			body: data,
+		})
+			.then((res) => res.json())
+			.then((json) => {
+				if (json.id) {
+					toast.success("Product created successfully!", {
+						position: toast.POSITION.BOTTOM_RIGHT,
+					});
+
+					reset();
+				}
+			});
+	};
+
+	const handleCancel = () => {
+		reset();
+		navigate("/products");
+	};
+
 	return (
 		<div className="">
 			<div className="flex flex-col items-center justify-between gap-6 p-10 md:flex-row">
@@ -11,11 +54,13 @@ const AddProduct = () => {
 				</div>
 				<div className="flex flex-wrap items-center gap-4">
 					<button
+						onClick={handleCancel}
 						type="button"
 						className="inline-flex items-center justify-center rounded-lg border bg-white px-6  py-3 text-center text-base font-medium text-slate-950">
 						Cancel
 					</button>
 					<button
+						onClick={handleSubmit(onSubmit)}
 						type="button"
 						className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-center text-base font-medium text-white">
 						Create
@@ -24,7 +69,7 @@ const AddProduct = () => {
 			</div>
 
 			<div className="px-10">
-				<form action="">
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<hr />
 					<div className="grid max-w-4xl grid-cols-1 gap-2 py-5 lg:grid-cols-3 lg:gap-6">
 						<label htmlFor="title" className="text-sm font-medium text-gray-700">
@@ -32,12 +77,16 @@ const AddProduct = () => {
 						</label>
 						<div className="lg:col-span-2">
 							<input
+								{...register("title", { required: "A title is required." })}
 								name="title"
 								id="title"
 								type="text"
 								placeholder="Product Title"
-								className="block w-full rounded-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring"
+								className={`block w-full rounded-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring ${
+									errors.title && "border-rose-600"
+								}`}
 							/>
+							{errors.title && <p className="mt-2 text-sm text-rose-600">{errors.title.message}</p>}
 						</div>
 					</div>
 					<hr />
@@ -47,17 +96,24 @@ const AddProduct = () => {
 						</label>
 						<div className="lg:col-span-2">
 							<div className="flex">
-								<span className="-mr-px grid shrink-0 place-content-center rounded-s-lg border bg-white px-4 font-medium">
+								<span
+									className={`-mr-px grid shrink-0 place-content-center rounded-s-lg border bg-white px-4 font-medium transition ${
+										errors.price && "border-rose-600"
+									}`}>
 									$
 								</span>
 								<input
+									{...register("price", { required: "Price is required." })}
 									name="price"
 									id="price"
 									type="text"
 									placeholder="Product Price"
-									className="block w-full rounded-e-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring"
+									className={`block w-full rounded-e-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring ${
+										errors.price && "border-rose-600"
+									}`}
 								/>
 							</div>
+							{errors.price && <p className="mt-2 text-sm text-rose-600">{errors.price.message}</p>}
 						</div>
 					</div>
 					<hr />
@@ -118,12 +174,23 @@ const AddProduct = () => {
 						</div>
 						<div className="lg:col-span-2">
 							<textarea
+								{...register("description", {
+									required: "Description is required.",
+									maxLength: { value: 275, message: "This input exceed max length." },
+								})}
 								name="description"
 								id="description"
 								placeholder="Write something about your products..."
-								className="block w-full rounded-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring"
+								className={`block w-full rounded-lg border bg-white px-4 py-2.5 text-base text-gray-900 outline-0 transition placeholder:text-sm focus:ring ${
+									errors.description && "border-rose-600"
+								}`}
 								rows="4"></textarea>
-							<p className="mt-2 text-sm text-gray-500">275 charecters left</p>
+							<p className="mt-2 text-sm text-gray-500">
+								{watch("description") ? `${275 - watch("description").length}` : "275"} charecters left
+							</p>
+							{errors.description && (
+								<p className="mt-2 text-sm text-rose-600">{errors.description.message}</p>
+							)}
 						</div>
 					</div>
 					<hr />
