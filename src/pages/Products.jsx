@@ -1,13 +1,35 @@
 import { useQuery } from "react-query";
 import ProductCard from "../components/ProductCard";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Products = () => {
-	const { status, error, data } = useQuery("productsData", () =>
+	// Get All Products
+	const { status, error, refetch, data } = useQuery("productsData", () =>
 		fetch("https://fakestoreapi.com/products/").then((res) => res.json()),
 	);
 
-	// console.log(data);
+	// Delete a product
+	const handleDeleteProduct = (id) => {
+		fetch(`https://fakestoreapi.com/products/${id}`, {
+			method: "DELETE",
+		})
+			.then((res) => res.json())
+			.then((json) => {
+				// console.log(json);
+				if (json.id) {
+					toast.success("Product deleted successfully!", {
+						position: toast.POSITION.BOTTOM_RIGHT,
+					});
+				}
+			})
+			.catch((error) => {
+				console.error(error);
+				toast.error(error, {
+					position: toast.POSITION.BOTTOM_RIGHT,
+				});
+			});
+	};
 
 	return (
 		<div>
@@ -15,7 +37,7 @@ const Products = () => {
 				<h2 className="text-3xl font-semibold text-gray-900">Products</h2>
 				<Link
 					to={"/products/create-product"}
-					className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-center text-base font-medium text-white">
+					className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-center text-base font-medium text-white transition hover:bg-blue-700">
 					Create New
 				</Link>
 			</div>
@@ -28,7 +50,7 @@ const Products = () => {
 				) : (
 					<>
 						{data.map((product) => (
-							<ProductCard key={product.id} product={product} />
+							<ProductCard key={product.id} product={product} handleDeleteProduct={handleDeleteProduct} />
 						))}
 					</>
 				)}
